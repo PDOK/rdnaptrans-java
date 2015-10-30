@@ -68,6 +68,7 @@
     <scm>
     	<url>http://github.so.kadaster.nl/PDOK/rdnaptrans-java</url>
     	<connection>scm:git:http://github.so.kadaster.nl/PDOK/rdnaptrans-java.git</connection>
+        <developerConnection>scm:git:git@github.so.kadaster.nl:PDOK/rdnaptrans-java.git</developerConnection>
     </scm>
     
     <distributionManagement>
