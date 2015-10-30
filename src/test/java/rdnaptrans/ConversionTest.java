@@ -49,9 +49,9 @@ public class ConversionTest {
            });
     }
     
-    private String name;
-    private Geographic etrs;
-    private Cartesian rd;
+    private final String name;
+    private final Geographic etrs;
+    private final Cartesian rd;
     
     public ConversionTest(String name, Geographic etrs, Cartesian rd) {
         this.name = name;

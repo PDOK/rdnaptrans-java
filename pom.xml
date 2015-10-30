@@ -24,7 +24,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
     
-    <build>
+<!--    <build>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -40,6 +40,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
     
 </project>

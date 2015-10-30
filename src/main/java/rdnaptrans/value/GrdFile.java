@@ -6,15 +6,14 @@
 package rdnaptrans.value;
 
 import com.google.common.io.ByteStreams;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import static java.lang.Math.floor;
 import java.net.URL;
 import java.util.Arrays;
-import javax.print.DocFlavor;
+import java.util.HashMap;
+import java.util.Map;
 import static rdnaptrans.Helpers.*;
 import static rdnaptrans.Constants.*;
 
@@ -116,8 +115,8 @@ public class GrdFile {
         **    Check for location safely inside the bounding box of grid
         **--------------------------------------------------------------
         */
-        if (x<=(header.min_x+header.step_size_x) || x>=(header.max_x-header.step_size_x) ||
-            y<=(header.min_y+header.step_size_y) || y>=(header.max_y-header.step_size_y))
+        if (x<=header.safe_min_x || x>= header.safe_max_x ||
+            y<= header.safe_min_y || y>= header.safe_max_y)
         {
             return OptionalDouble.empty();
         }
@@ -176,7 +175,8 @@ public class GrdFile {
         */
         for (int i=0; i<16; i=i+1)
         {
-            record_value[i] = read_grd_file_body(record_number[i]);
+            record_value[i] = memoized_read_grd_file_body.get(record_number[i]);
+            //record_value[i] = read_grd_file_body(record_number[i]);
             if (record_value[i]>header.max_value+PRECISION || record_value[i]<header.min_value-PRECISION)
             {
                 return OptionalDouble.empty();
@@ -327,7 +327,7 @@ public class GrdFile {
     **    none
     **--------------------------------------------------------------
     */
-    private float read_grd_file_body(int record_number) throws IOException
+    private float read_grd_file_body(int record_number)
     {
         final int record_length  =  4;
         final int header_length  = 56;
@@ -349,6 +349,32 @@ public class GrdFile {
         
         return read_float(b);
     }
+    
+    abstract public class Memoize1<P, V> {
+        //The memory, it maps one calculation parameter to one calculation result
+        private Map<P, V> values = new HashMap<P, V>();
+
+        private V get(P p) {
+            if (!values.containsKey(p)) {
+                values.put(p, calc(p));
+            }
+            return values.get(p);
+        }
+
+        /**
+         * Will implement the calculations that are
+         * to be remembered thanks to this class
+         * (one calculation per distinct parameter)
+         */
+        public abstract V calc(P p);
+    }
+    
+    Memoize1<Integer, Float> memoized_read_grd_file_body = new Memoize1<Integer, Float>() {
+        @Override
+        public Float calc(Integer record_number) {
+            return read_grd_file_body(record_number);
+        }
+    };
     
     private static class GrdFileHeader {
     
@@ -376,6 +402,11 @@ public class GrdFile {
         
         public final double step_size_x;
         public final double step_size_y;
+        
+        public final double safe_min_x;
+        public final double safe_max_x;
+        public final double safe_min_y;
+        public final double safe_max_y;
 
         public GrdFileHeader(short size_x, short size_y, double min_x, double max_x, double min_y, double max_y, double min_value, double max_value) {
             this.size_x = size_x;
@@ -389,6 +420,11 @@ public class GrdFile {
             
             this.step_size_x = (this.max_x - this.min_x)/(size_x-1);
             this.step_size_y = (this.max_y - this.min_y)/(size_y-1);
+            
+            this.safe_min_x = this.min_x + this.step_size_x;
+            this.safe_max_x = this.max_x - this.step_size_x;
+            this.safe_min_y = this.min_y + this.step_size_y;
+            this.safe_max_y = this.max_y - this.step_size_y;
         }
     }
     
