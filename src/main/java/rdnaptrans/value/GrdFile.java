@@ -42,8 +42,8 @@ public class GrdFile {
     **         3.20833 degrees < ETRS89 longitude (stepsize 0.083333 degrees) <  7.45833 degrees
     **
     **        Alternative notation:
-    **        50° 31' 30" < ETRS89_latitude  (stepsize 0° 3' 0") < 53° 40' 30"
-    **         3° 12' 30" < ETRS89_longitude (stepsize 0° 5' 0") <  7° 27' 30"
+    **        50\u0248 31' 30" < ETRS89_latitude  (stepsize 0\u0248 3' 0") < 53\u0248 40' 30"
+    **         3\u0248 12' 30" < ETRS89_longitude (stepsize 0\u0248 5' 0") <  7\u0248 27' 30"
     **
     **        The stepsizes correspond to about 5,5 km x 5,5 km in the Netherlands.
     **--------------------------------------------------------------

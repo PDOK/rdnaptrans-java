@@ -58,7 +58,7 @@ public class Constants {
     **        beta   rotation around y axis in radials
     **        gamma  rotation around z axis in radials
     **        delta  scale parameter (scale = 1 + delta)
-    **    Source of constants: A. de Bruijne, J. van Buren, A. Kösters and H. van der Marel, "De geodetische referentiestelsels van Nederland; Definitie en vastlegging van ETRS89, RD en NAP en hun onderlinge relatie". Delft: Nederlandse Commissie voor Geodesie (NCG), to be published in 2005.
+    **    Source of constants: A. de Bruijne, J. van Buren, A. K\u0148sters and H. van der Marel, "De geodetische referentiestelsels van Nederland; Definitie en vastlegging van ETRS89, RD en NAP en hun onderlinge relatie". Delft: Nederlandse Commissie voor Geodesie (NCG), to be published in 2005.
     **--------------------------------------------------------------
     */
     public static final double TX_BESSEL_ETRS    =  593.0248;
