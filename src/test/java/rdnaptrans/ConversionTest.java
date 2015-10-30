@@ -24,7 +24,7 @@ import static rdnaptrans.Transform.rdnap2etrs;
  * @author raymond
  */
 @RunWith(Parameterized.class)
-public class EtrsToNap {
+public class ConversionTest {
     
     public static double MAX_DELTA_RD = 0.001;
     public static double MAX_DELTA_ANGLE = 0.00000001;
@@ -53,7 +53,7 @@ public class EtrsToNap {
     private Geographic etrs;
     private Cartesian rd;
     
-    public EtrsToNap(String name, Geographic etrs, Cartesian rd) {
+    public ConversionTest(String name, Geographic etrs, Cartesian rd) {
         this.name = name;
         this.etrs = etrs;
         this.rd = rd;
@@ -66,7 +66,6 @@ public class EtrsToNap {
         assertEquals(name, rd.X, result.X, MAX_DELTA_RD);
         assertEquals(name, rd.Y, result.Y, MAX_DELTA_RD);
         assertEquals(name, rd.Z, result.Z, MAX_DELTA_H);
-        
     }
     
     @Test
@@ -74,8 +73,7 @@ public class EtrsToNap {
         Geographic result = rdnap2etrs(rd);
         assertEquals(name, etrs.lambda, result.lambda, MAX_DELTA_ANGLE);
         assertEquals(name, etrs.phi, result.phi, MAX_DELTA_ANGLE);
-        assertEquals(name, etrs.h, result.h, MAX_DELTA_H);
-        
+        assertEquals(name, etrs.h, result.h, MAX_DELTA_H);    
     }
     
     

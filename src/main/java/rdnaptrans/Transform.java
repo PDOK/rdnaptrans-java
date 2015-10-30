@@ -10,6 +10,7 @@ import static rdnaptrans.Constants.*;
 import static rdnaptrans.Helpers.*;
 import rdnaptrans.value.Cartesian;
 import rdnaptrans.value.Geographic;
+import rdnaptrans.value.GrdFile;
 import rdnaptrans.value.OptionalDouble;
 
 /**
@@ -51,7 +52,7 @@ public class Transform {
 **    none
 **--------------------------------------------------------------
 */
-static Cartesian etrs2rd(Geographic etrs) throws IOException
+public static Cartesian etrs2rd(Geographic etrs) throws IOException
 {
     double x_amersfoort_etrs;
     double y_amersfoort_etrs;
@@ -109,7 +110,7 @@ static Cartesian etrs2rd(Geographic etrs) throws IOException
 **    none
 **--------------------------------------------------------------
 */
-static Geographic rd2etrs(Cartesian rd) throws IOException
+public static Geographic rd2etrs(Cartesian rd) throws IOException
 {
     /*
     **--------------------------------------------------------------
@@ -169,7 +170,7 @@ static Geographic rd2etrs(Cartesian rd) throws IOException
 **    instead in etrs2rdnap nap=h_bessel
 **--------------------------------------------------------------
 */
-static OptionalDouble etrs2nap(Geographic etrs) throws IOException
+public static OptionalDouble etrs2nap(Geographic etrs) throws IOException
 {
     /*
     **--------------------------------------------------------------
@@ -180,7 +181,7 @@ static OptionalDouble etrs2nap(Geographic etrs) throws IOException
     **--------------------------------------------------------------
     */
     
-    OptionalDouble n = grid_interpolation(etrs.lambda, etrs.phi, GRID_FILE_GEOID);
+    OptionalDouble n = GrdFile.GRID_FILE_GEOID.grid_interpolation(etrs.lambda, etrs.phi);
     
     if (n.isPresent()) {
         return OptionalDouble.of(etrs.h-n.getAsDouble()+0.0088);
@@ -213,7 +214,7 @@ static OptionalDouble etrs2nap(Geographic etrs) throws IOException
 **    instead in rdnap2etrs h=h_etrs_sim (from similarity transformation)
 **--------------------------------------------------------------
 */
-static OptionalDouble nap2etrs(double phi, double lambda, double nap) throws IOException
+public static OptionalDouble nap2etrs(double phi, double lambda, double nap) throws IOException
 {
     /*
     **--------------------------------------------------------------
@@ -221,7 +222,7 @@ static OptionalDouble nap2etrs(double phi, double lambda, double nap) throws IOE
     **        n  geoid height
     **--------------------------------------------------------------
     */
-    OptionalDouble n = grid_interpolation(lambda, phi, GRID_FILE_GEOID);
+    OptionalDouble n = GrdFile.GRID_FILE_GEOID.grid_interpolation(lambda, phi);
     
     if (n.isPresent()) {
         return OptionalDouble.of(nap+n.getAsDouble()-0.0088);
@@ -252,7 +253,7 @@ static OptionalDouble nap2etrs(double phi, double lambda, double nap) throws IOE
 **    none
 **--------------------------------------------------------------
 */
-static Cartesian etrs2rdnap(Geographic etrs) throws IOException
+public static Cartesian etrs2rdnap(Geographic etrs) throws IOException
 {
     Cartesian rd = etrs2rd(etrs);
     OptionalDouble better_h = etrs2nap(etrs);
@@ -285,7 +286,7 @@ static Cartesian etrs2rdnap(Geographic etrs) throws IOException
 **    none
 **--------------------------------------------------------------
 */
-static Geographic rdnap2etrs(Cartesian rdnap) throws IOException
+public static Geographic rdnap2etrs(Cartesian rdnap) throws IOException
 {
     Geographic etrs = rd2etrs(rdnap);
     OptionalDouble better_h = nap2etrs(etrs.phi,  etrs.lambda, rdnap.Z);
