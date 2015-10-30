@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>nl.pdok</groupId>
     <artifactId>rdnaptrans-java</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -69,7 +69,7 @@
     	<url>http://github.so.kadaster.nl/PDOK/rdnaptrans-java</url>
     	<connection>scm:git:http://github.so.kadaster.nl/PDOK/rdnaptrans-java.git</connection>
         <developerConnection>scm:git:git@github.so.kadaster.nl:PDOK/rdnaptrans-java.git</developerConnection>
-      <tag>rdnaptrans-java-1.0</tag>
+      <tag>HEAD</tag>
   </scm>
     
     <distributionManagement>
