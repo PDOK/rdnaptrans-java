@@ -48,12 +48,12 @@ public class GrdFile {
     **        The stepsizes correspond to about 5,5 km x 5,5 km in the Netherlands.
     **--------------------------------------------------------------
     */
-    public static final GrdFile GRID_FILE_DX = new GrdFile(ClassLoader.getSystemResource("rdnaptrans/x2c.grd"));
-    public static final GrdFile GRID_FILE_DY = new GrdFile(ClassLoader.getSystemResource("rdnaptrans/y2c.grd"));
-    public static final GrdFile GRID_FILE_GEOID = new GrdFile(ClassLoader.getSystemResource("rdnaptrans/nlgeo04.grd"));
+    public static final GrdFile GRID_FILE_DX = new GrdFile(GrdFile.class.getResource("/rdnaptrans/x2c.grd"));
+    public static final GrdFile GRID_FILE_DY = new GrdFile(GrdFile.class.getResource("/rdnaptrans/y2c.grd"));
+    public static final GrdFile GRID_FILE_GEOID = new GrdFile(GrdFile.class.getResource("/rdnaptrans/nlgeo04.grd"));
     
     private final byte[] grdInner;
-    public final GrdFileHeader header;
+    private final GrdFileHeader header;
     
     public GrdFile(URL src) {
         try {
