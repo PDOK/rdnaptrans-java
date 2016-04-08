@@ -62,18 +62,4 @@
         <developerConnection>scm:git:git@github.so.kadaster.nl:PDOK/rdnaptrans-java.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
-    
-    <distributionManagement>
-        <repository>
-            <id>releases-repo</id>
-            <name>Nexus Releases Repo</name>
-            <url>http://mvnrepository.so.kadaster.nl:8081/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots-repo</id>
-            <name>Nexus Releases Repo</name>
-            <url>http://mvnrepository.so.kadaster.nl:8081/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-    
 </project>
