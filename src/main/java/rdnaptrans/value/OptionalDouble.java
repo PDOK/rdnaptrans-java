@@ -34,8 +34,6 @@ import java.util.NoSuchElementException;
  * <p>Additional methods that depend on the presence or absence of a contained
  * value are provided, such as {@link #orElse(double) orElse()}
  * (return a default value if value not present) and
- * {@link #ifPresent(java.util.function.DoubleConsumer) ifPresent()} (execute a block
- * of code if the value is present).
  *
  * <p>This is a <a href="../lang/doc-files/ValueBased.html">value-based</a>
  * class; use of identity-sensitive operations (including reference equality
@@ -61,7 +59,7 @@ public final class OptionalDouble {
     /**
      * Construct an empty instance.
      *
-     * @implNote generally only one empty instance, {@link OptionalDouble#EMPTY},
+     * generally only one empty instance, {@link OptionalDouble#EMPTY},
      * should exist per VM.
      */
     private OptionalDouble() {
@@ -73,7 +71,7 @@ public final class OptionalDouble {
      * Returns an empty {@code OptionalDouble} instance.  No value is present for this
      * OptionalDouble.
      *
-     * @apiNote Though it may be tempting to do so, avoid testing if an object
+     * Though it may be tempting to do so, avoid testing if an object
      * is empty by comparing with {@code ==} against instances returned by
      * {@code Option.empty()}. There is no guarantee that it is a singleton.
      * Instead, use {@link #isPresent()}.
@@ -170,7 +168,7 @@ public final class OptionalDouble {
      * Returns a non-empty string representation of this object suitable for
      * debugging. The exact presentation format is unspecified and may vary
      * between implementations and versions.
-     * @implSpec If a value is present the result must include its string
+     * If a value is present the result must include its string
      * representation in the result. Empty and present instances must be
      * unambiguously differentiable.
      */

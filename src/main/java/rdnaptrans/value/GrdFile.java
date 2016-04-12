@@ -383,6 +383,8 @@ public class GrdFile {
          * Will implement the calculations that are
          * to be remembered thanks to this class
          * (one calculation per distinct parameter)
+         * @param p Calc V for p
+         * @return v based on p
          */
         public abstract V calc(P p);
     }
