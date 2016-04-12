@@ -13,8 +13,10 @@ import rdnaptrans.value.Geographic;
 import rdnaptrans.value.GrdFile;
 
 /**
+ * <p>Helpers class.</p>
  *
  * @author raymond
+ * @version $Id: $Id
  */
 public class Helpers {
     /*
@@ -627,22 +629,49 @@ public class Helpers {
         return new Geographic(phi, lambda);
     }
     
+    /**
+     * <p>read_double.</p>
+     *
+     * @param in a {@link java.io.InputStream} object.
+     * @return a double.
+     * @throws java.io.IOException if any.
+     */
     public static double read_double(InputStream in) throws IOException {
         byte[] bytes = new byte[8];
         in.read(bytes);
         return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getDouble();
     }
     
+    /**
+     * <p>read_float.</p>
+     *
+     * @param in an array of byte.
+     * @return a float.
+     */
     public static float read_float(byte[] in) {
         return ByteBuffer.wrap(in).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
     
+    /**
+     * <p>read_float.</p>
+     *
+     * @param in a {@link java.io.InputStream} object.
+     * @return a float.
+     * @throws java.io.IOException if any.
+     */
     public static float read_float(InputStream in) throws IOException {
         byte[] bytes = new byte[4];
         in.read(bytes);
         return read_float(bytes);
     }
     
+    /**
+     * <p>read_short.</p>
+     *
+     * @param in a {@link java.io.InputStream} object.
+     * @return a short.
+     * @throws java.io.IOException if any.
+     */
     public static short read_short(InputStream in) throws IOException {
         byte[] bytes = new byte[2];
         in.read(bytes);

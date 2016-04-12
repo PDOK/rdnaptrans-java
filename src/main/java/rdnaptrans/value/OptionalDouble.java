@@ -43,6 +43,8 @@ import java.util.NoSuchElementException;
  * {@code OptionalDouble} may have unpredictable results and should be avoided.
  *
  * @since 1.8
+ * @author raymond
+ * @version $Id: $Id
  */
 public final class OptionalDouble {
     /**
@@ -75,7 +77,6 @@ public final class OptionalDouble {
      * is empty by comparing with {@code ==} against instances returned by
      * {@code Option.empty()}. There is no guarantee that it is a singleton.
      * Instead, use {@link #isPresent()}.
-     *
      *  @return an empty {@code OptionalDouble}.
      */
     public static OptionalDouble empty() {
@@ -108,7 +109,6 @@ public final class OptionalDouble {
      *
      * @return the value held by this {@code OptionalDouble}
      * @throws NoSuchElementException if there is no value present
-     *
      * @see OptionalDouble#isPresent()
      */
     public double getAsDouble() {
@@ -138,6 +138,8 @@ public final class OptionalDouble {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Indicates whether some other object is "equal to" this OptionalDouble. The
      * other object is considered equal if:
      * <ul>
@@ -145,10 +147,6 @@ public final class OptionalDouble {
      * <li>both instances have no value present or;
      * <li>the present values are "equal to" each other via {@code Double.compare() == 0}.
      * </ul>
-     *
-     * @param obj an object to be tested for equality
-     * @return {code true} if the other object is "equal to" this object
-     * otherwise {@code false}
      */
     @Override
     public boolean equals(Object obj) {
@@ -172,12 +170,9 @@ public final class OptionalDouble {
      * Returns a non-empty string representation of this object suitable for
      * debugging. The exact presentation format is unspecified and may vary
      * between implementations and versions.
-     *
      * @implSpec If a value is present the result must include its string
      * representation in the result. Empty and present instances must be
      * unambiguously differentiable.
-     *
-     * @return the string representation of this instance
      */
     @Override
     public String toString() {

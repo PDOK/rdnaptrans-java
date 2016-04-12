@@ -18,8 +18,10 @@ import static rdnaptrans.Helpers.*;
 import static rdnaptrans.Constants.*;
 
 /**
+ * <p>GrdFile class.</p>
  *
  * @author raymond
+ * @version $Id: $Id
  */
 public class GrdFile {
     
@@ -48,13 +50,21 @@ public class GrdFile {
     **        The stepsizes correspond to about 5,5 km x 5,5 km in the Netherlands.
     **--------------------------------------------------------------
     */
+    /** Constant <code>GRID_FILE_DX</code> */
     public static final GrdFile GRID_FILE_DX = new GrdFile(GrdFile.class.getResource("/rdnaptrans/x2c.grd"));
+    /** Constant <code>GRID_FILE_DY</code> */
     public static final GrdFile GRID_FILE_DY = new GrdFile(GrdFile.class.getResource("/rdnaptrans/y2c.grd"));
+    /** Constant <code>GRID_FILE_GEOID</code> */
     public static final GrdFile GRID_FILE_GEOID = new GrdFile(GrdFile.class.getResource("/rdnaptrans/nlgeo04.grd"));
     
     private final byte[] grdInner;
     private final GrdFileHeader header;
     
+    /**
+     * <p>Constructor for GrdFile.</p>
+     *
+     * @param src a {@link java.net.URL} object.
+     */
     public GrdFile(URL src) {
         try {
             this.header = read_grd_file_header(src);
@@ -87,6 +97,14 @@ public class GrdFile {
     **    none
     **--------------------------------------------------------------
     */
+    /**
+     * <p>grid_interpolation.</p>
+     *
+     * @param x a double.
+     * @param y a double.
+     * @return a {@link rdnaptrans.value.OptionalDouble} object.
+     * @throws java.io.IOException if any.
+     */
     public OptionalDouble grid_interpolation(double x, double y) throws IOException
     {
         int[] record_number = new int[16];

@@ -6,8 +6,10 @@
 package rdnaptrans.value;
 
 /**
+ * <p>Geographic class.</p>
  *
  * @author raymond
+ * @version $Id: $Id
  */
 public class Geographic {
     
@@ -21,16 +23,35 @@ public class Geographic {
     public final double lambda; 
     public final double h;
 
+    /**
+     * <p>Constructor for Geographic.</p>
+     *
+     * @param phi a double.
+     * @param lambda a double.
+     * @param h a double.
+     */
     public Geographic(double phi, double lambda, double h) {
         this.phi = phi;
         this.lambda = lambda;
         this.h = h;
     }
     
+    /**
+     * <p>Constructor for Geographic.</p>
+     *
+     * @param phi a double.
+     * @param lambda a double.
+     */
     public Geographic(double phi, double lambda) {
         this (phi, lambda, 0);
     }
     
+    /**
+     * <p>withH.</p>
+     *
+     * @param h a double.
+     * @return a {@link rdnaptrans.value.Geographic} object.
+     */
     public Geographic withH(double h) {
         return new Geographic(phi, lambda, h);
     }

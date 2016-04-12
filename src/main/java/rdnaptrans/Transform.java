@@ -14,8 +14,10 @@ import rdnaptrans.value.GrdFile;
 import rdnaptrans.value.OptionalDouble;
 
 /**
+ * <p>Transform class.</p>
  *
  * @author raymond
+ * @version $Id: $Id
  */
 public class Transform {
     /* JAVA PORT
@@ -52,6 +54,13 @@ public class Transform {
 **    none
 **--------------------------------------------------------------
 */
+/**
+ * <p>etrs2rd.</p>
+ *
+ * @param etrs a {@link rdnaptrans.value.Geographic} object.
+ * @return a {@link rdnaptrans.value.Cartesian} object.
+ * @throws java.io.IOException if any.
+ */
 public static Cartesian etrs2rd(Geographic etrs) throws IOException
 {
     double x_amersfoort_etrs;
@@ -110,6 +119,13 @@ public static Cartesian etrs2rd(Geographic etrs) throws IOException
 **    none
 **--------------------------------------------------------------
 */
+/**
+ * <p>rd2etrs.</p>
+ *
+ * @param rd a {@link rdnaptrans.value.Cartesian} object.
+ * @return a {@link rdnaptrans.value.Geographic} object.
+ * @throws java.io.IOException if any.
+ */
 public static Geographic rd2etrs(Cartesian rd) throws IOException
 {
     /*
@@ -170,6 +186,13 @@ public static Geographic rd2etrs(Cartesian rd) throws IOException
 **    instead in etrs2rdnap nap=h_bessel
 **--------------------------------------------------------------
 */
+/**
+ * <p>etrs2nap.</p>
+ *
+ * @param etrs a {@link rdnaptrans.value.Geographic} object.
+ * @return a {@link rdnaptrans.value.OptionalDouble} object.
+ * @throws java.io.IOException if any.
+ */
 public static OptionalDouble etrs2nap(Geographic etrs) throws IOException
 {
     /*
@@ -214,6 +237,15 @@ public static OptionalDouble etrs2nap(Geographic etrs) throws IOException
 **    instead in rdnap2etrs h=h_etrs_sim (from similarity transformation)
 **--------------------------------------------------------------
 */
+/**
+ * <p>nap2etrs.</p>
+ *
+ * @param phi a double.
+ * @param lambda a double.
+ * @param nap a double.
+ * @return a {@link rdnaptrans.value.OptionalDouble} object.
+ * @throws java.io.IOException if any.
+ */
 public static OptionalDouble nap2etrs(double phi, double lambda, double nap) throws IOException
 {
     /*
@@ -253,6 +285,13 @@ public static OptionalDouble nap2etrs(double phi, double lambda, double nap) thr
 **    none
 **--------------------------------------------------------------
 */
+/**
+ * <p>etrs2rdnap.</p>
+ *
+ * @param etrs a {@link rdnaptrans.value.Geographic} object.
+ * @return a {@link rdnaptrans.value.Cartesian} object.
+ * @throws java.io.IOException if any.
+ */
 public static Cartesian etrs2rdnap(Geographic etrs) throws IOException
 {
     Cartesian rd = etrs2rd(etrs);
@@ -286,6 +325,13 @@ public static Cartesian etrs2rdnap(Geographic etrs) throws IOException
 **    none
 **--------------------------------------------------------------
 */
+/**
+ * <p>rdnap2etrs.</p>
+ *
+ * @param rdnap a {@link rdnaptrans.value.Cartesian} object.
+ * @return a {@link rdnaptrans.value.Geographic} object.
+ * @throws java.io.IOException if any.
+ */
 public static Geographic rdnap2etrs(Cartesian rdnap) throws IOException
 {
     Geographic etrs = rd2etrs(rdnap);
