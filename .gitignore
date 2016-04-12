@@ -6,3 +6,5 @@
 target/
 /.settings
 nb-configuration.xml
+.idea/
+*.iml
