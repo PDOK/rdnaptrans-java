@@ -1,10 +1,11 @@
 {
   "name": "rdnaptrans.js",
   "version": "0.1.0",
-  "description": "JavaScript implementation of RDNAPTRANS, for the reprojection \u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b\u001b[C\u001b[3~\u001b[3~\u001b[3~\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C projection of RD geometries (EPSG:28992) to ETRS89 (EPSG:4258) and vice versa",
+  "description": "JavaScript implementation of RDNAPTRANS, for the projection of RD geometries (EPSG:28992) to ETRS89 (EPSG:4258) and vice versa",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive -R spec --bail --check-leaks src/test",
+    "cover": "istanbul cover _mocha -- --recursive -R spec --bail --check-leaks src/test"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,8 @@
   "homepage": "https://github.com/reinvantveer/rdnaptrans.js#readme",
   "dependencies": {
     "whatwg-fetch": "^2.0.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0"
   }
 }
