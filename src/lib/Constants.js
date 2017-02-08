@@ -97,9 +97,26 @@ class Constants {
      *         Delft: Nederlandse Commissie voor Geodesie (NCG), 1997.
      **--------------------------------------------------------------
      */
+    this.SCALE_RD = 0.9999079;
+    this.X_AMERSFOORT_RD = 155000;
+    this.Y_AMERSFOORT_RD = 463000;
 
+    /**
+     **--------------------------------------------------------------
+     **    Continuation of static data declarations
+     **    Precision parameters for iterations (respectively in meters and degrees)
+     **--------------------------------------------------------------
+     */
     this.PRECISION = 0.0001;
     this.DEG_PRECISION = this.PRECISION / (40e6 * 360);
+
+    /**
+     **--------------------------------------------------------------
+     **    Continuation of static data declarations
+     **    Mean difference between NAP and ellipsoidal Bessel height.
+     *     This is only used for getting from x, y in RD to phi, lambda in ETRS89.
+     **--------------------------------------------------------------
+     */
     this.MEAN_GEOID_HEIGHT_BESSEL = 0.0;
   }
 
