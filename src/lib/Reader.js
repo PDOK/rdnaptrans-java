@@ -35,12 +35,16 @@ class reader {
     }
   }
 
-  readShort(buffer, cursor) {
+  static readShort(buffer, cursor) {
     return buffer.readUInt16LE(cursor);
   }
 
-  readDouble(buffer, cursor) {
+  static readDouble(buffer, cursor) {
     return buffer.readDoubleLE(cursor);
+  }
+
+  static readFloat(buffer, cursor) {
+    return buffer.readFloatLE(cursor);
   }
 }
 

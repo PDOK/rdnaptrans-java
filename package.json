@@ -26,7 +26,9 @@
   },
   "homepage": "https://github.com/reinvantveer/rdnaptrans.js#readme",
   "dependencies": {
-    "whatwg-fetch": "^2.0.2"
+    "co": "^4.6.0",
+    "whatwg-fetch": "^2.0.2",
+    "xtend": "^4.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

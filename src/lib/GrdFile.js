@@ -2,13 +2,15 @@
  * Created by veerr on 8-2-2017.
  */
 
-// import static rdnaptrans.Helpers.*;
-// import static rdnaptrans.Constants.*;
+'use strict';
 
+const path = require('path');
+const xtend = require('xtend');
+const Constants = require('./Constants');
 const Reader = require('./Reader');
 
-let cursor = 0;
-
+const constants = new Constants();
+const floor = Math.floor;
 /**
  * <p>GrdFile class.</p>
  *
@@ -22,7 +24,8 @@ class GrdFile {
    **    Names of grd files
    **
    **    Grd files are binary grid files in the format of the program Surfer(R)
-   **    The header contains information on the number of grid points, bounding box and extreme values.
+   **    The header contains information on the number of grid points,
+   **    bounding box and extreme values.
    **
    **    RD-corrections in x and y
    **
@@ -42,11 +45,13 @@ class GrdFile {
    **--------------------------------------------------------------
    */
   /** Constant <code>GRID_FILE_DX</code> */
-  // const GRID_FILE_DX = "/rdnaptrans/x2c.grd";
+  static GRID_FILE_DX() { return new GrdFile(path.join(__dirname, '../resources/rdnaptrans/x2c.grd')); }
+
   /** Constant <code>GRID_FILE_DY</code> */
-  // const GRID_FILE_DY = "/rdnaptrans/y2c.grd";
+  static GRID_FILE_DY() { return new GrdFile(path.join(__dirname, '../resources/rdnaptrans/y2c.grd')); }
+
   /** Constant <code>GRID_FILE_GEOID</code> */
-  // const GRID_FILE_GEOID = new GrdFile(GrdFile.class.getResource("/rdnaptrans/nlgeo04.grd"));
+  static GRID_FILE_GEOID() { return new GrdFile(path.join(__dirname, '../resources/rdnaptrans/nlgeo04.grd')); }
 
   /**
    * <p>Constructor for GrdFile.</p>
@@ -61,16 +66,19 @@ class GrdFile {
      */
 
     const reader = new Reader(src);
-    return new Promise((resolve, reject) => {
-      return reader.read(src)
+    let cursor = 0;
+
+    return new Promise((resolve, reject) => reader.read(src)
         .then((data) => {
           /**
            **--------------------------------------------------------------
            **    Read file id
            **--------------------------------------------------------------
            */
-          const idString = data.slice(0, 4)
+          console.log(cursor);
+          const idString = data.slice(cursor, cursor + 4)
             .toString();
+          cursor += 4;
 
           /**
            **--------------------------------------------------------------
@@ -83,11 +91,20 @@ class GrdFile {
           }
 
           this.grdInner = data;
-          this.header = this.readGrdFileHeader(data, reader);
+          this.header = this.readGrdFileHeader(data, reader, cursor);
+          this.header = xtend(this.header, {
+            stepSizeX: (this.header.maxX - this.header.minX) / (this.header.sizeX - 1),
+            stepSizeY: (this.header.maxY - this.header.minY) / (this.header.sizeY - 1)
+          });
+          this.header = xtend(this.header, {
+            safeMinX: this.header.minX + this.header.stepSizeX,
+            safeMaxX: this.header.maxX - this.header.stepSizeX,
+            safeMinY: this.header.minY + this.header.stepSizeY,
+            safeMaxY: this.header.maxY - this.header.stepSizeY
+          });
           return resolve(this);
         })
-        .catch(reject);
-    });
+        .catch(reject));
   }
 
   /**
@@ -112,14 +129,14 @@ class GrdFile {
    */
 
   /**
-   * <p>grid_interpolation.</p>
+   * <p>gridInterpolation.</p>
    *
    * @param x a double.
    * @param y a double.
    * @return a {@link rdnaptrans.value.OptionalDouble} object.
    * @throws java.io.IOException if any.
    */
-  static grid_interpolation(x, y) {
+  gridInterpolation(x, y) {
     /**
      **--------------------------------------------------------------
      **    Explanation of the meaning of variables:
@@ -134,14 +151,15 @@ class GrdFile {
      **--------------------------------------------------------------
      */
 
-    /*
+    /**
      **--------------------------------------------------------------
      **    Check for location safely inside the bounding box of grid
      **--------------------------------------------------------------
      */
-    if (x <= header.safe_min_x || x >= header.safe_max_x ||
-      y <= header.safe_min_y || y >= header.safe_max_y) {
-      return OptionalDouble.empty();
+    const header = this.header;
+    if (x <= header.safeMinX || x >= header.safeMaxX ||
+      y <= header.safeMinY || y >= header.safeMaxY) {
+      return null;
     }
 
     /**
@@ -160,10 +178,12 @@ class GrdFile {
      **    to grid point 9, respectively to the right and down.
      **--------------------------------------------------------------
      */
-    ddx = (x - header.min_x) / header.step_size_x - floor((x - header.min_x) / header.step_size_x);
-    ddy = 1 - ((y - header.min_y) / header.step_size_y - floor((y - header.min_y) / header.step_size_y));
+    const ddx = (x - header.minX) /
+      header.stepSizeX - floor((x - header.minX) / header.stepSizeX);
+    const ddy = 1 - ((y - header.minY) /
+      header.stepSizeY - floor((y - header.minY) / header.stepSizeY));
 
-    /*
+    /**
      **--------------------------------------------------------------
      **    Calculate the record numbers of the selected grid points
      **    The records are numbered from lower left corner to the uper right corner starting with 0:
@@ -174,34 +194,40 @@ class GrdFile {
      **                   0 . . . . . . size_x-1
      **--------------------------------------------------------------
      */
-    record_number[5] = (int)((x - header.min_x) / header.step_size_x + floor((y - header.min_y) / header.step_size_y) * header.size_x);
-    record_number[0] = record_number[5] - header.size_x - 1;
-    record_number[1] = record_number[5] - header.size_x;
-    record_number[2] = record_number[5] - header.size_x + 1;
-    record_number[3] = record_number[5] - header.size_x + 2;
-    record_number[4] = record_number[5] - 1;
-    record_number[6] = record_number[5] + 1;
-    record_number[7] = record_number[5] + 2;
-    record_number[8] = record_number[5] + header.size_x - 1;
-    record_number[9] = record_number[5] + header.size_x;
-    record_number[10] = record_number[5] + header.size_x + 1;
-    record_number[11] = record_number[5] + header.size_x + 2;
-    record_number[12] = record_number[5] + 2 * header.size_x - 1;
-    record_number[13] = record_number[5] + 2 * header.size_x;
-    record_number[14] = record_number[5] + 2 * header.size_x + 1;
-    record_number[15] = record_number[5] + 2 * header.size_x + 2;
+    const recordNumber = [];
+    recordNumber[5] = parseInt(((x - header.minX) /
+      header.stepSizeX + floor((y - header.minY) / header.stepSizeY) * header.sizeX), 10);
+    recordNumber[0] = recordNumber[5] - header.sizeX - 1;
+    recordNumber[1] = recordNumber[5] - header.sizeX;
+    recordNumber[2] = recordNumber[5] - header.sizeX + 1;
+    recordNumber[3] = recordNumber[5] - header.sizeX + 2;
+    recordNumber[4] = recordNumber[5] - 1;
+    recordNumber[6] = recordNumber[5] + 1;
+    recordNumber[7] = recordNumber[5] + 2;
+    recordNumber[8] = recordNumber[5] + header.sizeX - 1;
+    recordNumber[9] = recordNumber[5] + header.sizeX;
+    recordNumber[10] = recordNumber[5] + header.sizeX + 1;
+    recordNumber[11] = recordNumber[5] + header.sizeX + 2;
+    recordNumber[12] = recordNumber[5] + 2 * header.sizeX - 1;
+    recordNumber[13] = recordNumber[5] + 2 * header.sizeX;
+    recordNumber[14] = recordNumber[5] + 2 * header.sizeX + 1;
+    recordNumber[15] = recordNumber[5] + 2 * header.sizeX + 2;
 
-    /*
+    /**
      **--------------------------------------------------------------
      **    Read the record values of the selected grid point
      **    Outside the validity area the records have a very large value (circa 1.7e38).
      **--------------------------------------------------------------
      */
-    for (i = 0; i < 16; i = i + 1) {
-      record_value[i] = memoized_read_grd_file_body.get(record_number[i]);
-      //record_value[i] = read_grd_file_body(record_number[i]);
-      if (record_value[i] > header.max_value + PRECISION || record_value[i] < header.min_value - PRECISION) {
-        return OptionalDouble.empty();
+    const recordValue = [];
+
+    for (let i = 0; i < 16; i += 1) {
+      recordValue[i] = this.readGrdFileBody(recordNumber[i]);
+      if (
+        recordValue[i] > header.maxValue + constants.PRECISION ||
+        recordValue[i] < header.minValue - constants.PRECISION
+      ) {
+        return null;
       }
     }
 
@@ -210,6 +236,9 @@ class GrdFile {
      **    Calculation of the multiplication factors
      **--------------------------------------------------------------
      */
+    const f = [];
+    const g = [];
+    const gfac = [];
     f[0] = -0.5 * ddx + ddx * ddx - 0.5 * ddx * ddx * ddx;
     f[1] = 1.0 - 2.5 * ddx * ddx + 1.5 * ddx * ddx * ddx;
     f[2] = 0.5 * ddx + 2.0 * ddx * ddx - 1.5 * ddx * ddx * ddx;
@@ -243,11 +272,11 @@ class GrdFile {
      **--------------------------------------------------------------
      */
     let value = 0.0;
-    for (i = 0; i < 16; i = i + 1) {
-      value = value + gfac[i] * record_value[i];
+    for (let i = 0; i < 16; i += 1) {
+      value += gfac[i] * recordValue[i];
     }
 
-    return OptionalDouble.of(value);
+    return value;
   }
 
   /*
@@ -281,28 +310,28 @@ class GrdFile {
    **    none
    **--------------------------------------------------------------
    */
-  readGrdFileHeader(input, reader) {
+  readGrdFileHeader(input, reader, cursor) {
     /*
      **--------------------------------------------------------------
      **    Read output parameters
      **--------------------------------------------------------------
      */
 
-    const sizeX = reader.readShort(input, cursor);
+    const sizeX = Reader.readShort(input, cursor);
     cursor += 2;
-    const sizeY = reader.readShort(input, cursor);
+    const sizeY = Reader.readShort(input, cursor);
     cursor += 2;
-    const minX = reader.readDouble(input, cursor);
-    cursor += 4;
-    const maxX = reader.readDouble(input, cursor);
-    cursor += 4;
-    const minY = reader.readDouble(input, cursor);
+    const minX = Reader.readDouble(input, cursor);
     cursor += 8;
-    const maxY = reader.readDouble(input, cursor);
+    const maxX = Reader.readDouble(input, cursor);
     cursor += 8;
-    const minValue = reader.readDouble(input, cursor);
+    const minY = Reader.readDouble(input, cursor);
     cursor += 8;
-    const maxValue = reader.readDouble(input, cursor);
+    const maxY = Reader.readDouble(input, cursor);
+    cursor += 8;
+    const minValue = Reader.readDouble(input, cursor);
+    cursor += 8;
+    const maxValue = Reader.readDouble(input, cursor);
     cursor += 8;
 
     return { sizeX, sizeY, minX, maxX, minY, maxY, minValue, maxValue };
@@ -320,33 +349,35 @@ class GrdFile {
    **
    **    Additional explanation of the meaning of parameters
    **    filename       name of the grd file to be read
-   **    record_number  number defining the position in the file
+   **    recordNumber  number defining the position in the file
    **    record_value   output of the read value
    **
    **    Return value: (besides the standard return values)
    **    none
    **--------------------------------------------------------------
    */
-  read_grd_file_body(record_number) {
-    const record_length = 4;
-    const header_length = 56;
+  readGrdFileBody(recordNumber) {
+    const recordLength = 4;
+    const headerLength = 56;
 
 
-    /*
+    /**
      **--------------------------------------------------------------
      **    Read
      **    Grd files are binary grid files in the format of the program Surfer(R)
-     **    The first "header_length" bytes are the header of the file
-     **    The body of the file consists of records of "record_length" bytes
-     **    The records have a "record_number", starting with 0,1,2,...
+     **    The first "headerLength" bytes are the header of the file
+     **    The body of the file consists of records of "recordLength" bytes
+     **    The records have a "recordNumber", starting with 0,1,2,...
      **--------------------------------------------------------------
      */
 
 
-    const b = Arrays.copyOfRange(grdInner, header_length + record_number * record_length,
-      header_length + record_number * (record_length + 1));
+    const b = this.grdInner.slice(
+      headerLength + recordNumber * recordLength,
+      headerLength + recordNumber * (recordLength + 1)
+    );
 
-    return read_float(b);
+    return Reader.readFloat(b);
   }
 
   /**
@@ -356,43 +387,8 @@ class GrdFile {
    * @param p Calc V for p
    * @return v based on p
    */
-  calc(record_number) {
-    return this.read_grd_file_body(record_number);
-  }
-}
-
-class GrdFileHeader {
-
-  /*
-   **    Additional explanation of the meaning of parameters
-   **    filename   name of the to be read binary file
-   **    size_x     number of grid values in x direction (row)
-   **    size_y     number of grid values in y direction (col)
-   **    min_x      minimum of x
-   **    max_x      maximum of x
-   **    min_y      minimum of y
-   **    max_y      maximum of x
-   **    min_value  minimum value in grid (besides the error values)
-   **    max_value  maximum value in grid (besides the error values)
-   */
-
-  constructor(size_x, size_y, min_x, max_x, min_y, max_y, min_value, max_value) {
-    this.size_x = size_x;
-    this.size_y = size_y;
-    this.min_x = min_x;
-    this.max_x = max_x;
-    this.min_y = min_y;
-    this.max_y = max_y;
-    this.min_value = min_value;
-    this.max_value = max_value;
-
-    this.step_size_x = (this.max_x - this.min_x) / (size_x - 1);
-    this.step_size_y = (this.max_y - this.min_y) / (size_y - 1);
-
-    this.safe_min_x = this.min_x + this.step_size_x;
-    this.safe_max_x = this.max_x - this.step_size_x;
-    this.safe_min_y = this.min_y + this.step_size_y;
-    this.safe_max_y = this.max_y - this.step_size_y;
+  calc(recordNumber) {
+    return this.readGrdFileBody(recordNumber);
   }
 }
 

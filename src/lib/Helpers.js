@@ -6,23 +6,27 @@
 
 'use strict';
 
-const cos = Math.cos;
-const sin = Math.sin;
-const asin = Math.asin;
-const tan = Math.tan;
-const atan = Math.atan;
-const pow = Math.pow;
-const exp = Math.exp;
-const sqrt = Math.sqrt;
-const PI = Math.PI;
-const abs = Math.abs;
-const log = Math.log;
+const co = require('co');
 
 const Angle = require('./Angle');
 const Cartesian = require('./Cartesian');
 const Geographic = require('./Geographic');
 const GrdFile = require('./GrdFile');
 const Constants = require('./Constants');
+
+const cos = Math.cos;
+const sin = Math.sin;
+const asin = Math.asin;
+const tan = Math.tan;
+const atan = Math.atan;
+/* eslint no-restricted-properties: 0 */
+// Allow Math.pow as exponential operator (**) is not supported in ES6 yet
+const pow = Math.pow;
+const exp = Math.exp;
+const sqrt = Math.sqrt;
+const PI = Math.PI;
+const abs = Math.abs;
+const log = Math.log;
 
 const constants = new Constants();
 
@@ -55,9 +59,7 @@ class Helpers {
    **    sin(alpha)
    **--------------------------------------------------------------
    */
-  static degSin(alpha) {
-    return sin(alpha / (180.0 * PI));
-  }
+  static degSin(alpha) { return sin(alpha / 180.0 * PI); }
 
   /**
    **--------------------------------------------------------------
@@ -74,9 +76,7 @@ class Helpers {
    **    cos(alpha)
    **--------------------------------------------------------------
    */
-  static degCos(alpha) {
-    return cos(alpha / (180.0 * PI));
-  }
+  static degCos(alpha) { return cos(alpha / 180.0 * PI); }
 
   /**
    **--------------------------------------------------------------
@@ -93,9 +93,7 @@ class Helpers {
    **    tan(alpha)
    **--------------------------------------------------------------
    */
-  static degTan(alpha) {
-    return tan(alpha / (180.0 * PI));
-  }
+  static degTan(alpha) { return tan(alpha / 180.0 * PI); }
 
   /**
    **--------------------------------------------------------------
@@ -112,9 +110,7 @@ class Helpers {
    **    asin(a)
    **--------------------------------------------------------------
    */
-  static degAsin(a) {
-    return (asin(a) * (180.0 / PI));
-  }
+  static degAsin(a) { return (asin(a) * 180.0 / PI); }
 
   /**
    **--------------------------------------------------------------
@@ -131,9 +127,7 @@ class Helpers {
    **    atan(a)
    **--------------------------------------------------------------
    */
-  static degAtan(a) {
-    return (atan(a) * (180.0 / PI));
-  }
+  static degAtan(a) { return (atan(a) * 180.0 / PI); }
 
   /**
    **--------------------------------------------------------------
@@ -150,58 +144,7 @@ class Helpers {
    **    atanh(a)
    **--------------------------------------------------------------
    */
-  static atanh(a) {
-    return (0.5 * log((1.0 + a) / (1.0 - a)));
-  }
-
-  /**
-   **--------------------------------------------------------------
-   **    Function name: deg_min_sec2decimal
-   **    Description:   converts from degrees, minutes and seconds to decimal degrees
-   **
-   **    Parameter      Type        In/Out Req/Opt Default
-   **    deg            const      in     req     none
-   **    min            const      in     req     none
-   **    sec            const      in     req     none
-   **    dec_deg        const      out    -       none
-   **
-   **    Additional explanation of the meaning of parameters
-   **    All parameters are consts, so one can also enter decimal minutes or degrees.
-   **    Note: Nonsense input is accepted too.
-   **
-   **    Return value: (besides the standard return values)
-   **    none
-   **--------------------------------------------------------------
-   */
-  static degMinSec2decimal(angle) {
-    return (angle.Degrees + (angle.Minutes / 60.0) + (angle.Seconds / 3600.0));
-  }
-
-  /**
-   **--------------------------------------------------------------
-   **    Function name: decimal2deg_min_sec
-   **    Description:   converts from decimal degrees to degrees, minutes and seconds
-   **
-   **    Parameter      Type        In/Out Req/Opt Default
-   **    dec_deg        const      in     req     none
-   **    deg            int         out    -       none
-   **    min            int         out    -       none
-   **    sec            const      out    -       none
-   **
-   **    Additional explanation of the meaning of parameters
-   **    none
-   **
-   **    Return value: (besides the standard return values)
-   **    none
-   **--------------------------------------------------------------
-   */
-  static decimal2degMinSec(decDeg) {
-    const deg = parseInt(decDeg, 10);
-    const min = parseInt((decDeg - deg) * 60.0, 10);
-    const sec = ((decDeg - deg) * 60.0 - min) * 60.0;
-
-    return new Angle(deg, min, sec);
-  }
+  static atanh(a) { return (0.5 * log((1.0 + a) / (1.0 - a))); }
 
   /**
    **--------------------------------------------------------------
@@ -230,7 +173,7 @@ class Helpers {
    **    none
    **--------------------------------------------------------------
    */
-  geographic2cartesian(geographic, a, inverseF) {
+  static geographic2cartesian(geographic, a, inverseF) {
     /**
      **--------------------------------------------------------------
      **    Source: G. Bakker, J.C. de Munck and G.L. Strang van Hees,
@@ -248,11 +191,13 @@ class Helpers {
      */
     const f = 1.0 / inverseF;
     const ee = f * (2.0 - f);
-    const n = a / sqrt(1.0 - ee * pow(this.degSin(geographic.phi), 2));
+    const n = a / sqrt(1.0 - ee * pow(Helpers.degSin(geographic.phi), 2));
 
-    const x = (n + geographic.h) * this.degCos(geographic.phi) * this.degCos(geographic.lambda);
-    const y = (n + geographic.h) * this.degCos(geographic.phi) * this.degSin(geographic.lambda);
-    const z = (n * (1.0 - ee) + geographic.h) * this.degSin(geographic.phi);
+    const x = (n + geographic.h) * Helpers.degCos(geographic.phi)
+      * Helpers.degCos(geographic.lambda);
+    const y = (n + geographic.h) * Helpers.degCos(geographic.phi)
+      * Helpers.degSin(geographic.lambda);
+    const z = (n * (1.0 - ee) + geographic.h) * Helpers.degSin(geographic.phi);
 
     return new Cartesian(x, y, z);
   }
@@ -284,7 +229,7 @@ class Helpers {
    **    none
    **--------------------------------------------------------------
    */
-  cartesian2geographic(c, a, inverseF) {
+  static cartesian2geographic(c, a, inverseF) {
     /**
      **--------------------------------------------------------------
      **    Source: G. Bakker, J.C. de Munck and G.L. Strang van Hees, "Radio Positioning at Sea".
@@ -317,8 +262,8 @@ class Helpers {
 
     while (diff > constants.DEG_PRECISION) {
       previous = phi;
-      n = a / sqrt(1.0 - ee * pow(this.degSin(phi), 2));
-      phi = this.degAtan((c.Z / rho) + (n * ee * (this.degSin(phi) / rho)));
+      n = a / sqrt(1.0 - ee * pow(Helpers.degSin(phi), 2));
+      phi = Helpers.degAtan((c.Z / rho) + (n * ee * (Helpers.degSin(phi) / rho)));
       diff = abs(phi - previous);
     }
 
@@ -327,9 +272,10 @@ class Helpers {
      **     Calculation of lambda and h
      **--------------------------------------------------------------
      */
-    const lambda = this.degAtan(c.Y / c.X);
-    const h = (rho * this.degCos(phi)) + (c.Z * this.degSin(phi)) -
-      (n * (1.0 - ee * pow(this.degSin(phi), 2)));
+    const lambda = Helpers.degAtan(c.Y / c.X);
+    const h = rho * Helpers.degCos(phi) +
+      c.Z * Helpers.degSin(phi) -
+      n * (1.0 - ee * pow(Helpers.degSin(phi), 2));
 
     return new Geographic(phi, lambda, h);
   }
@@ -429,7 +375,7 @@ class Helpers {
 
   /**
    **--------------------------------------------------------------
-   **    Function name: rd_projection
+   **    Function name: rdProjection
    **    Description:   stereographic const projection
    **
    **    Parameter      Type        In/Out Req/Opt Default
@@ -447,7 +393,7 @@ class Helpers {
    **    none
    **--------------------------------------------------------------
    */
-  rdProjection(input) {
+  static rdProjection(input) {
     /**
      **--------------------------------------------------------------
      **    Source: G. Bakker, J.C. de Munck and G.L. Strang van Hees,
@@ -488,20 +434,20 @@ class Helpers {
     const e = sqrt(ee);
     const eea = ee / (1.0 - ee);
 
-    const phiAmersfoortSphere = this.degAtan(this.degTan(constants.PHI_AMERSFOORT_BESSEL) /
-      sqrt(1 + eea * pow(this.degCos(constants.PHI_AMERSFOORT_BESSEL), 2)));
+    const phiAmersfoortSphere = Helpers.degAtan(Helpers.degTan(constants.PHI_AMERSFOORT_BESSEL) /
+      sqrt(1 + eea * pow(Helpers.degCos(constants.PHI_AMERSFOORT_BESSEL), 2)));
     const lambdaAmersfoortSphere = constants.LAMBDA_AMERSFOORT_BESSEL;
 
     const r1 = constants.A_BESSEL * (1 - ee) /
-      pow(sqrt(1 - ee * pow(this.degSin(constants.PHI_AMERSFOORT_BESSEL), 2)), 3);
+      pow(sqrt(1 - ee * pow(Helpers.degSin(constants.PHI_AMERSFOORT_BESSEL), 2)), 3);
     const r2 = constants.A_BESSEL /
-      sqrt(1.0 - ee * pow(this.degSin(constants.PHI_AMERSFOORT_BESSEL), 2));
+      sqrt(1.0 - ee * pow(Helpers.degSin(constants.PHI_AMERSFOORT_BESSEL), 2));
     const rSphere = sqrt(r1 * r2);
 
-    const n = sqrt(1 + eea * pow(this.degCos(constants.PHI_AMERSFOORT_BESSEL), 4));
-    const qAmersfoort = this.atanh(this.degSin(constants.PHI_AMERSFOORT_BESSEL)) -
-      (e * this.atanh(e * this.degSin(constants.PHI_AMERSFOORT_BESSEL)));
-    const wAmersfoort = log(this.degTan(45 + 0.5 * phiAmersfoortSphere));
+    const n = sqrt(1 + eea * pow(Helpers.degCos(constants.PHI_AMERSFOORT_BESSEL), 4));
+    const qAmersfoort = Helpers.atanh(Helpers.degSin(constants.PHI_AMERSFOORT_BESSEL)) -
+      (e * Helpers.atanh(e * Helpers.degSin(constants.PHI_AMERSFOORT_BESSEL)));
+    const wAmersfoort = log(Helpers.degTan(45 + 0.5 * phiAmersfoortSphere));
     const m = wAmersfoort - n * qAmersfoort;
 
     /**
@@ -516,21 +462,22 @@ class Helpers {
      **        r                    distance from Amersfoort in projection plane
      **--------------------------------------------------------------
      */
-    const q = (this.degSin(input.phi)) - e * this.atanh(e * this.degSin(input.phi));
+    const q = Helpers.atanh(Helpers.degSin(input.phi)) -
+      e * Helpers.atanh(e * Helpers.degSin(input.phi));
     const w = (n * q) + m;
-    const phiSphere = 2 * this.degAtan(exp(w)) - 90;
+    const phiSphere = 2 * Helpers.degAtan(exp(w)) - 90;
     const deltaLambdaSphere = n * (input.lambda - lambdaAmersfoortSphere);
-    const sinHalfPsiSquared = pow(this.degSin(0.5 * (phiSphere - phiAmersfoortSphere)), 2) +
-      pow(this.degSin(0.5 * deltaLambdaSphere), 2) *
-      this.degCos(phiSphere) * this.degCos(phiAmersfoortSphere);
+    const sinHalfPsiSquared = pow(Helpers.degSin(0.5 * (phiSphere - phiAmersfoortSphere)), 2) +
+      pow(Helpers.degSin(0.5 * deltaLambdaSphere), 2) *
+      Helpers.degCos(phiSphere) * Helpers.degCos(phiAmersfoortSphere);
     const sinHalfPsi = sqrt(sinHalfPsiSquared);
     const cosHalfPsi = sqrt(1 - sinHalfPsiSquared);
     const tanHalfPsi = sinHalfPsi / cosHalfPsi;
     const sinPsi = 2 * sinHalfPsi * cosHalfPsi;
     const cosPsi = 1 - 2 * sinHalfPsiSquared;
-    const sinAlpha = this.degSin(deltaLambdaSphere) * (this.degCos(phiSphere) / sinPsi);
-    const cosAlpha = (this.degSin(phiSphere) - this.degSin(phiAmersfoortSphere) * cosPsi) /
-      (this.degCos(phiAmersfoortSphere) * sinPsi);
+    const sinAlpha = Helpers.degSin(deltaLambdaSphere) * (Helpers.degCos(phiSphere) / sinPsi);
+    const cosAlpha = (Helpers.degSin(phiSphere) - Helpers.degSin(phiAmersfoortSphere) * cosPsi) /
+      (Helpers.degCos(phiAmersfoortSphere) * sinPsi);
     const r = 2 * constants.SCALE_RD * rSphere * tanHalfPsi;
 
     const xRD = r * sinAlpha + constants.X_AMERSFOORT_RD;
@@ -559,7 +506,7 @@ class Helpers {
    **    none
    **--------------------------------------------------------------
    */
-  invRdProjection(input) {
+  static invRdProjection(input) {
     /**
      **--------------------------------------------------------------
      **    Source: G. Bakker, J.C. de Munck and G.L. Strang van Hees,
@@ -664,10 +611,15 @@ class Helpers {
   }
 
   static rdCorrection(pseudo) {
-    const dx = GrdFile.GRID_FILE_DX.grid_interpolation(pseudo.X, pseudo.Y);
-    const dy = GrdFile.GRID_FILE_DY.grid_interpolation(pseudo.X, pseudo.Y);
-
-    return new Cartesian(pseudo.X - dx.orElse(0), pseudo.Y - dy.orElse(0), pseudo.Z);
+    return co(function* constructCorrection() {
+      const gridDX = yield GrdFile.GRID_FILE_DX();
+      const gridDY = yield GrdFile.GRID_FILE_DY();
+      const dx = gridDX.gridInterpolation(pseudo.X, pseudo.Y);
+      const dy = gridDY.gridInterpolation(pseudo.X, pseudo.Y);
+      return new Cartesian(pseudo.X - dx, pseudo.Y - dy, pseudo.Z);
+    })
+      .then(cartesian => cartesian)
+      .catch(err => { throw err; });
   }
 
   /**
@@ -697,8 +649,8 @@ class Helpers {
      **    The intoduced error is certainly smaller than 0.0001 m for the X2c.grd and Y2c.grd.
      **--------------------------------------------------------------
      */
-    const dx = GrdFile.GRID_FILE_DX.grid_interpolation(rd.X, rd.Y);
-    const dy = GrdFile.GRID_FILE_DY.grid_interpolation(rd.X, rd.Y);
+    const dx = GrdFile.GRID_FILE_DX.gridInterpolation(rd.X, rd.Y);
+    const dy = GrdFile.GRID_FILE_DY.gridInterpolation(rd.X, rd.Y);
     return new Cartesian(rd.X + dx, rd.Y + dy, rd.Z);
   }
 }
