@@ -31,7 +31,6 @@ class Cartesian {
    * @return a {@link rdnaptrans.value.Cartesian} object.
    */
   withZ(z) {
-    console.log(this);
     return new Cartesian(this.X, this.Y, z);
   }
 }

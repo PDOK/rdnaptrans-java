@@ -75,7 +75,6 @@ class GrdFile {
            **    Read file id
            **--------------------------------------------------------------
            */
-          console.log(cursor);
           const idString = data.slice(cursor, cursor + 4)
             .toString();
           cursor += 4;
@@ -231,7 +230,7 @@ class GrdFile {
       }
     }
 
-    /*
+    /**
      **--------------------------------------------------------------
      **    Calculation of the multiplication factors
      **--------------------------------------------------------------
@@ -279,7 +278,7 @@ class GrdFile {
     return value;
   }
 
-  /*
+  /**
    **--------------------------------------------------------------
    **    Function name: read_grd_file_header
    **    Description:   reads the header of a grd file
@@ -311,27 +310,27 @@ class GrdFile {
    **--------------------------------------------------------------
    */
   readGrdFileHeader(input, reader, cursor) {
-    /*
+    /**
      **--------------------------------------------------------------
      **    Read output parameters
      **--------------------------------------------------------------
      */
 
-    const sizeX = Reader.readShort(input, cursor);
+    const sizeX = input.readUInt16LE(cursor);
     cursor += 2;
-    const sizeY = Reader.readShort(input, cursor);
+    const sizeY = input.readUInt16LE(cursor);
     cursor += 2;
-    const minX = Reader.readDouble(input, cursor);
+    const minX = input.readDoubleLE(cursor);
     cursor += 8;
-    const maxX = Reader.readDouble(input, cursor);
+    const maxX = input.readDoubleLE(cursor);
     cursor += 8;
-    const minY = Reader.readDouble(input, cursor);
+    const minY = input.readDoubleLE(cursor);
     cursor += 8;
-    const maxY = Reader.readDouble(input, cursor);
+    const maxY = input.readDoubleLE(cursor);
     cursor += 8;
-    const minValue = Reader.readDouble(input, cursor);
+    const minValue = input.readDoubleLE(cursor);
     cursor += 8;
-    const maxValue = Reader.readDouble(input, cursor);
+    const maxValue = input.readDoubleLE(cursor);
     cursor += 8;
 
     return { sizeX, sizeY, minX, maxX, minY, maxY, minValue, maxValue };
@@ -360,7 +359,6 @@ class GrdFile {
     const recordLength = 4;
     const headerLength = 56;
 
-
     /**
      **--------------------------------------------------------------
      **    Read
@@ -371,13 +369,16 @@ class GrdFile {
      **--------------------------------------------------------------
      */
 
+    const start = headerLength + recordNumber * recordLength;
+    const end = headerLength + recordNumber * (recordLength + 1);
 
-    const b = this.grdInner.slice(
-      headerLength + recordNumber * recordLength,
-      headerLength + recordNumber * (recordLength + 1)
-    );
+    const b = this.grdInner.slice(start, end);
 
-    return Reader.readFloat(b);
+    try {
+      return b.readFloatLE(b);
+    } catch (err) {
+      console.error(err.stack);
+    }
   }
 
   /**

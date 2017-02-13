@@ -21,30 +21,29 @@ class reader {
       const fs = require('fs');
       this.read = function (filePath) {
         return new Promise((resolve, reject) => {
-          fs.readFile(filePath, (err, data) => {
+          fs.readFile(filePath, (err, buffer) => {
             if (err) return reject(err);
-            return resolve(data);
+            return resolve(buffer);
           });
         });
       };
-    } else if (typeof fetch !== 'function') {
-      const fetch = require('whatwg-fetch');
-      this.read = fetch;
     } else {
-      this.read = fetch;
+      this.read = function (filePath) {
+        return new Promise((resolve, reject) => {
+          const oReq = new XMLHttpRequest();
+          oReq.open('GET', filePath, true);
+          oReq.responseType = 'arraybuffer';
+
+          oReq.onload = () => {
+            const arrayBuffer = oReq.response;
+            if (arrayBuffer) return resolve(arrayBuffer);
+            return reject(new Error(`Unable to read arrayBuffer from ${filePath}`));
+          };
+
+          oReq.onerror(reject);
+        });
+      };
     }
-  }
-
-  static readShort(buffer, cursor) {
-    return buffer.readUInt16LE(cursor);
-  }
-
-  static readDouble(buffer, cursor) {
-    return buffer.readDoubleLE(cursor);
-  }
-
-  static readFloat(buffer, cursor) {
-    return buffer.readFloatLE(cursor);
   }
 }
 

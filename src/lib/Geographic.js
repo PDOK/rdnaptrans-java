@@ -30,6 +30,15 @@ class Geographic {
     this.lambda = lambda;
     this.h = h;
   }
+
+  /**
+   * <p>withH.</p>
+   *
+   * @param h a double.
+   * @return a {Geographic} object.
+   */
+  withH(h) { return new Geographic(this.phi, this.lambda, h); }
+
 }
 
 module.exports = Geographic;

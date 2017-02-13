@@ -29,8 +29,8 @@ describe('Reader', () => {
     return reader.read(path.join(__dirname, '/../../src/resources/rdnaptrans/x2c.grd'))
       .then((gridBuffer) => {
         Buffer.isBuffer(gridBuffer).should.equal(true);
-        const cols = reader.readShort(gridBuffer, 4);
-        const rows = reader.readShort(gridBuffer, 6);
+        const cols = gridBuffer.readUInt16LE(4);
+        const rows = gridBuffer.readUInt16LE(6);
         cols.should.equal(310);
         return rows.should.equal(343);
       });

@@ -2,6 +2,8 @@
  * Created by veerr on 10-2-2017.
  */
 
+const co = require('co');
+
 const Helpers = require('./lib/Helpers');
 const Constants = require('./lib/Constants');
 const Cartesian = require('./lib/Cartesian');
@@ -109,11 +111,11 @@ class Transform {
       constants.INV_F_BESSEL
     );
 
-    const pseudoRD = Helpers.rdProjection(geographicBessel);
-    const correction = Helpers.rdCorrection(pseudoRD);
-    return correction
-      .then(cartesian => cartesian.withZ(geographicBessel.h))
-      .catch(err => { throw err; });
+    return co(function* () {
+      const pseudoRD = Helpers.rdProjection(geographicBessel);
+      const corrected = yield Helpers.rdCorrection(pseudoRD);
+      return corrected.withZ(geographicBessel.h);
+    });
   }
 
 /**
@@ -143,46 +145,66 @@ class Transform {
  * @return a {Geographic} object.
  * @throws java.io.IOException if any.
  */
-static rd2etrs(rd){
-  /*
+  static rd2etrs(rd) {
+  /**
    **--------------------------------------------------------------
    **    Calculate the cartesian Bessel coordinates of the pivot point Amersfoort
    **--------------------------------------------------------------
    */
-  const amersfoort_bessel = geographic2cartesian(new Geographic(PHI_AMERSFOORT_BESSEL, LAMBDA_AMERSFOORT_BESSEL, H_AMERSFOORT_BESSEL),
-  A_BESSEL, INV_F_BESSEL);
+    const amersfoortBessel = Helpers.geographic2cartesian(
+      new Geographic(
+        constants.PHI_AMERSFOORT_BESSEL,
+        constants.LAMBDA_AMERSFOORT_BESSEL,
+        constants.H_AMERSFOORT_BESSEL
+      ),
+      constants.A_BESSEL,
+      constants.INV_F_BESSEL
+    );
 
-  /*
+  /**
    **--------------------------------------------------------------
    **    Calculate appoximated value of ellipsoidal Bessel height
-   **    The error made by using a constant for de Bessel geoid height is max. circa 1 meter in the ellipsoidal height (for the NLGEO2004 geoid model). This intoduces an error in the phi, lambda position too, this error is nevertheless certainly smaller than 0.0001 m.
+   **    The error made by using a constant for de Bessel geoid height is max.
+   **    circa 1 meter in the ellipsoidal height (for the NLGEO2004 geoid model).
+   **    This intoduces an error in the phi, lambda position too, this error is
+   **    nevertheless certainly smaller than 0.0001 m.
    **--------------------------------------------------------------
    */
-  const h_bessel = rd.Z + MEAN_GEOID_HEIGHT_BESSEL;
+    const hBessel = rd.Z + constants.MEAN_GEOID_HEIGHT_BESSEL;
 
-  /*
+  /**
    **--------------------------------------------------------------
    **    Convert RD coordinates to ETRS89 coordinates
    **--------------------------------------------------------------
    */
-  const pseudo_rd = inv_rd_correction(rd);
-  const etrs_bessel = inv_rd_projection(pseudo_rd);
-  const cartesian_bessel = helpers.geographic2cartesian(etrs_bessel.withH(h_bessel), A_BESSEL, INV_F_BESSEL);
-  const cartesian_etrs = sim_trans(cartesian_bessel,
-  new Cartesian(TX_BESSEL_ETRS, TY_BESSEL_ETRS, TZ_BESSEL_ETRS),
-  ALPHA_BESSEL_ETRS, BETA_BESSEL_ETRS, GAMMA_BESSEL_ETRS,
-  DELTA_BESSEL_ETRS,
-  amersfoort_bessel);
-  return cartesian2geographic(cartesian_etrs,
-    A_ETRS, INV_F_ETRS);
-  /*
+    return co(function* () {
+      const pseudoRD = yield Helpers.invRdCorrection(rd);
+      const etrsBessel = Helpers.invRdProjection(pseudoRD);
+      const cartesianBessel = Helpers.geographic2cartesian(
+        etrsBessel.withH(hBessel),
+        constants.A_BESSEL,
+        constants.INV_F_BESSEL
+      );
+      const cartesianETRS = Helpers.simTrans(
+        cartesianBessel,
+        new Cartesian(constants.TX_BESSEL_ETRS, constants.TY_BESSEL_ETRS, constants.TZ_BESSEL_ETRS),
+        constants.ALPHA_BESSEL_ETRS, constants.BETA_BESSEL_ETRS, constants.GAMMA_BESSEL_ETRS,
+        constants.DELTA_BESSEL_ETRS,
+        amersfoortBessel
+      );
+
+      return Helpers.cartesian2geographic(cartesianETRS,
+        constants.A_ETRS, constants.INV_F_ETRS);
+    });
+
+  /**
    **--------------------------------------------------------------
    **    To convert to degrees, minutes and seconds use the function decimal2deg_min_sec() here
    **--------------------------------------------------------------
    */
-}
+  }
 
-/*
+/**
  **--------------------------------------------------------------
  **    Function name: etrs2nap
  **    Description:   convert ellipsoidal ETRS89 height to NAP height
@@ -209,8 +231,8 @@ static rd2etrs(rd){
  * @return a {@link rdnaptrans.value.OptionalDouble} object.
  * @throws java.io.IOException if any.
  */
-static etrs2nap(etrs){
-  /*
+  static etrs2nap(etrs) {
+  /**
    **--------------------------------------------------------------
    **    Explanation of the meaning of variables:
    **        n  geoid height
@@ -219,18 +241,14 @@ static etrs2nap(etrs){
    **--------------------------------------------------------------
    */
 
-  const n = GrdFile.GRID_FILE_GEOID.grid_interpolation(etrs.lambda, etrs.phi);
-
-  if (n.isPresent()) {
-    return OptionalDouble.of(etrs.h-n.getAsDouble()+0.0088);
-  }
-  else {
-    return OptionalDouble.empty();
+    return co(function* interpolate() {
+      const grdFileZ = yield GrdFile.GRID_FILE_GEOID();
+      const n = grdFileZ.gridInterpolation(etrs.lambda, etrs.phi);
+      return n ? etrs.h - n + 0.0088 : null;
+    });
   }
 
-}
-
-/*
+/**
  **--------------------------------------------------------------
  **    Function name: nap2etrs
  **    Description:   convert NAP height to ellipsoidal ETRS89 height
@@ -261,24 +279,21 @@ static etrs2nap(etrs){
  * @return a {@link rdnaptrans.value.OptionalDouble} object.
  * @throws java.io.IOException if any.
  */
-static nap2etrs(phi, lambda, nap) {
-  /*
+  static nap2etrs(phi, lambda, nap) {
+  /**
    **--------------------------------------------------------------
    **    Explanation of the meaning of variables:
    **        n  geoid height
    **--------------------------------------------------------------
    */
-  const n = GrdFile.GRID_FILE_GEOID.grid_interpolation(lambda, phi);
-
-  if (n.isPresent()) {
-    return OptionalDouble.of(nap+n.getAsDouble()-0.0088);
+    return co(function* interpolate() {
+      const grdFileZ = yield GrdFile.GRID_FILE_GEOID();
+      const n = grdFileZ.gridInterpolation(lambda, phi);
+      return n ? nap + n - 0.0088 : null;
+    });
   }
-  else {
-    return OptionalDouble.empty();
-  }
-}
 
-/*
+/**
  **--------------------------------------------------------------
  **    Function name: etrs2rdnap
  **    Description:   convert ETRS89 coordinates to RD and NAP coordinates
@@ -306,18 +321,15 @@ static nap2etrs(phi, lambda, nap) {
  * @return a {@link rdnaptrans.value.Cartesian} object.
  * @throws java.io.IOException if any.
  */
-static etrs2rdnap(etrs) {
-  const rd = etrs2rd(etrs);
-  const better_h = etrs2nap(etrs);
-  if (better_h) {
-    return rd.withZ(better_h.getAsDouble());
+  static etrs2rdnap(etrs) {
+    return co(function* () {
+      const rd = yield Transform.etrs2rd(etrs);
+      const betterH = yield Transform.etrs2nap(etrs);
+      return betterH ? rd.withZ(betterH) : rd;
+    });
   }
-  else {
-    return rd;
-  }
-}
 
-/*
+/**
  **--------------------------------------------------------------
  **    Function name: rdnap2etrs
  **    Description:   convert RD and NAP coordinates to ETRS89 coordinates
@@ -345,17 +357,13 @@ static etrs2rdnap(etrs) {
  * @return a {@link rdnaptrans.value.Geographic} object.
  * @throws java.io.IOException if any.
  */
-static rdnap2etrs(rdnap) {
-  const etrs = rd2etrs(rdnap);
-  const better_h = nap2etrs(etrs.phi,  etrs.lambda, rdnap.Z);
-
-  if (better_h) {
-    return etrs.withH(better_h.getAsDouble());
+  static rdnap2etrs(rdnap) {
+    return co(function* () {
+      const etrs = yield Transform.rd2etrs(rdnap);
+      const betterH = yield Transform.nap2etrs(etrs.phi, etrs.lambda, rdnap.Z);
+      return betterH ? etrs.withH(betterH) : etrs;
+    });
   }
-  else {
-    return etrs;
-  }
-}
 
 /**
  **--------------------------------------------------------------

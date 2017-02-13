@@ -30,19 +30,37 @@ const places = [
 ];
 
 describe('Transform', () => {
-  it('checks transformations from ETRS 89 to RD for Texel', () => {
-    const texel = places[0];
-    return Transform.etrs2rd(texel[1]).should.eventually.equal(texel[2]);
-  });
-
   describe('checks transformations from ETRS 89 to RD', () => places
     .forEach(place =>
-      it(`tests ${place[0]}`, () => {
-        const transformed = Transform.etrs2rd(place[1]);
-          .should.eventually.equal({
-          X: place.X.toFixed(4),
-          Y: place.Y.toFixed(4),
-          Z: place.Z.toFixed(4)
+      it(`tests ${place[0]}`, () => Transform.etrs2rdnap(place[1])
+        .then((transformed) => {
+          const actualToFixed = {
+            X: parseFloat(transformed.X.toFixed(4)),
+            Y: parseFloat(transformed.Y.toFixed(4)),
+            Z: parseFloat(transformed.Z.toFixed(4))
+          };
+
+          return actualToFixed.should.deep.equal(place[2]);
         })
-      })));
+        .catch((err) => { throw err; })
+      )
+    )
+  );
+
+  describe('checks transformations from RD to ETRS 89', () => places
+    .forEach(place =>
+      it(`tests ${place[0]}`, () => Transform.rdnap2etrs(place[2])
+        .then((transformed) => {
+          const actualToFixed = {
+            phi: parseFloat(transformed.phi.toFixed(9)),
+            lambda: parseFloat(transformed.lambda.toFixed(9)),
+            h: parseFloat(transformed.h.toFixed(4))
+          };
+
+          return actualToFixed.should.deep.equal(place[1]);
+        })
+        .catch((err) => { throw err; })
+      )
+    )
+  );
 });
