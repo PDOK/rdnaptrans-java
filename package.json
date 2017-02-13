@@ -2,7 +2,7 @@
   "name": "rdnaptrans.js",
   "version": "0.1.0",
   "description": "JavaScript implementation of RDNAPTRANS, for the projection of RD geometries (EPSG:28992) to ETRS89 (EPSG:4258) and vice versa",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha --recursive -R spec --bail --check-leaks",
     "cover": "istanbul cover _mocha -- --recursive -R spec --bail --check-leaks src/test"
