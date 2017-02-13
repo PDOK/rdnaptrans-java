@@ -31,16 +31,24 @@ class reader {
       this.read = function (filePath) {
         return new Promise((resolve, reject) => {
           const oReq = new XMLHttpRequest();
-          oReq.open('GET', filePath, true);
-          oReq.responseType = 'arraybuffer';
+          let done = false;
 
-          oReq.onload = () => {
-            const arrayBuffer = oReq.response;
-            if (arrayBuffer) return resolve(arrayBuffer);
-            return reject(new Error(`Unable to read arrayBuffer from ${filePath}`));
+          oReq.onreadystatechange = () => {
+            if (oReq.readyState === 4 && !done) {
+              done = true;
+              const arrayBuffer = oReq.response;
+              if (arrayBuffer) return resolve(arrayBuffer);
+              return reject(new Error(`Unable to read arrayBuffer from ${filePath}`));
+            }
           };
 
-          oReq.onerror(reject);
+          try {
+            oReq.open('GET', filePath, true);
+            // oReq.responseType = 'arraybuffer';
+            oReq.send();
+          } catch (e) {
+            return reject(e);
+          }
         });
       };
     }

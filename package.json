@@ -4,8 +4,10 @@
   "description": "JavaScript implementation of RDNAPTRANS, for the projection of RD geometries (EPSG:28992) to ETRS89 (EPSG:4258) and vice versa",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive -R spec --bail --check-leaks",
-    "cover": "istanbul cover _mocha -- --recursive -R spec --bail --check-leaks src/test"
+    "build": "./node_modules/.bin/webpack",
+    "test": "mocha --recursive -R spec --bail --check-leaks test/server",
+    "test-browser": "./node_modules/.bin/karma start --browsers Firefox --single-run",
+    "cover": "istanbul cover _mocha -- --recursive -R spec --bail --check-leaks test"
   },
   "repository": {
     "type": "git",
@@ -32,6 +34,12 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
-    "mocha": "^3.2.0"
+    "karma": "^1.4.1",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-mocha": "^1.3.0",
+    "mocha": "^3.2.0",
+    "nock": "^9.0.5",
+    "webpack": "^2.2.1"
   }
 }
