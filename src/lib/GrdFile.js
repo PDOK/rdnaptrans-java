@@ -90,7 +90,7 @@ class GrdFile {
           }
 
           this.grdInner = data;
-          this.header = this.readGrdFileHeader(data, reader, cursor);
+          this.header = this.readGrdFileHeader(data, cursor);
           this.header = xtend(this.header, {
             stepSizeX: (this.header.maxX - this.header.minX) / (this.header.sizeX - 1),
             stepSizeY: (this.header.maxY - this.header.minY) / (this.header.sizeY - 1)
@@ -309,7 +309,7 @@ class GrdFile {
    **    none
    **--------------------------------------------------------------
    */
-  readGrdFileHeader(input, reader, cursor) {
+  readGrdFileHeader(input, cursor) {
     /**
      **--------------------------------------------------------------
      **    Read output parameters
@@ -331,7 +331,6 @@ class GrdFile {
     const minValue = input.readDoubleLE(cursor);
     cursor += 8;
     const maxValue = input.readDoubleLE(cursor);
-    cursor += 8;
 
     return { sizeX, sizeY, minX, maxX, minY, maxY, minValue, maxValue };
   }
