@@ -9,8 +9,6 @@ const Transform = require('../../index').Transform;
 const Geographic = require('../../index').Geographic;
 const Cartesian = require('../../index').Cartesian;
 
-const nock = require('nock');
-
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 

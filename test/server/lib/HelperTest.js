@@ -5,12 +5,11 @@
 
 'use strict';
 
-const Helpers = require('../../src/lib/Helpers');
-const Constants = require('../../src/lib/Constants');
-const Geographic = require('../../src/lib/Geographic');
-const Cartesian = require('../../src/lib/Cartesian');
+const Helpers = require('../../../src/lib/Helpers');
+const Constants = require('../../../src/lib/Constants');
+const Geographic = require('../../../src/lib/Geographic');
+const Cartesian = require('../../../src/lib/Cartesian');
 
-const helpers = new Helpers();
 const constants = new Constants();
 
 const chai = require('chai');

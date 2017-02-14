@@ -6,7 +6,7 @@
 'use strict';
 
 const path = require('path');
-const GrdFile = require('../../src/lib/GrdFile');
+const GrdFile = require('../../../src/lib/GrdFile');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
@@ -20,7 +20,7 @@ describe('GrdFile', () => {
   });
 
   it('reads the x offset grid file header', () => {
-    const grdFile = new GrdFile(path.join(__dirname, '/../../src/resources/rdnaptrans/x2c.grd'));
+    const grdFile = new GrdFile(path.join(__dirname, '/resources/x2c.grd'));
     return grdFile.then(data => data.header.should.deep.equal({
       sizeX: 310,
       sizeY: 343,

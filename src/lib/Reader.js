@@ -30,25 +30,12 @@ class reader {
     } else {
       this.read = function (filePath) {
         return new Promise((resolve, reject) => {
-          const oReq = new XMLHttpRequest();
-          let done = false;
-
-          oReq.onreadystatechange = () => {
-            if (oReq.readyState === 4 && !done) {
-              done = true;
-              const arrayBuffer = oReq.response;
-              if (arrayBuffer) return resolve(arrayBuffer);
-              return reject(new Error(`Unable to read arrayBuffer from ${filePath}`));
-            }
-          };
-
-          try {
-            oReq.open('GET', filePath, true);
-            // oReq.responseType = 'arraybuffer';
-            oReq.send();
-          } catch (e) {
-            return reject(e);
-          }
+          const xhrReq = new XMLHttpRequest();
+          xhrReq.open('GET', filePath, false);
+          // xhrReq.responseType = 'arraybuffer';
+          xhrReq.send();
+          console.log(JSON.stringify(xhrReq.response));
+          return resolve(xhrReq.response);
         });
       };
     }

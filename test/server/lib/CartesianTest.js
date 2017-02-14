@@ -6,7 +6,7 @@
 
 'use strict';
 
-const Cartesian = require('../../src/lib/Cartesian');
+const Cartesian = require('../../../src/lib/Cartesian');
 const chai = require('chai');
 
 chai.should();

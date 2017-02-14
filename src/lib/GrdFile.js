@@ -373,22 +373,7 @@ class GrdFile {
 
     const b = this.grdInner.slice(start, end);
 
-    try {
-      return b.readFloatLE(b);
-    } catch (err) {
-      console.error(err.stack);
-    }
-  }
-
-  /**
-   * Will implement the calculations that are
-   * to be remembered thanks to this class
-   * (one calculation per distinct parameter)
-   * @param p Calc V for p
-   * @return v based on p
-   */
-  calc(recordNumber) {
-    return this.readGrdFileBody(recordNumber);
+    return b.readFloatLE(b);
   }
 }
 

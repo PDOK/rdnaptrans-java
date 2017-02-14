@@ -6,7 +6,7 @@
 
 'use strict';
 
-const Angle = require('../../src/lib/Angle');
+const Angle = require('../../../src/lib/Angle');
 const chai = require('chai');
 
 chai.should();

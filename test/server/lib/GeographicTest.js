@@ -6,7 +6,7 @@
 
 'use strict';
 
-const Geographic = require('../../src/lib/Geographic');
+const Geographic = require('../../../src/lib/Geographic');
 const chai = require('chai');
 
 chai.should();
