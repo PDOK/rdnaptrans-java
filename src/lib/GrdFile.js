@@ -5,6 +5,7 @@
 'use strict';
 
 const path = require('path');
+const binary = require('bops');
 const xtend = require('xtend');
 const Constants = require('./Constants');
 const Reader = require('./Reader');
@@ -75,8 +76,7 @@ class GrdFile {
            **    Read file id
            **--------------------------------------------------------------
            */
-          const idString = data.slice(cursor, cursor + 4)
-            .toString();
+          const idString = binary.to(data.slice(cursor, cursor + 4));
           cursor += 4;
 
           /**
@@ -86,6 +86,7 @@ class GrdFile {
            */
 
           if (idString !== 'DSBB') {
+            console.error(idString);
             return reject(new Error(`${src} is not a valid grd file`));
           }
 
@@ -316,21 +317,21 @@ class GrdFile {
      **--------------------------------------------------------------
      */
 
-    const sizeX = input.readUInt16LE(cursor);
+    const sizeX = Reader.readShort(input, cursor);
     cursor += 2;
-    const sizeY = input.readUInt16LE(cursor);
+    const sizeY = Reader.readShort(input, cursor);
     cursor += 2;
-    const minX = input.readDoubleLE(cursor);
+    const minX = Reader.readDouble(input, cursor);
     cursor += 8;
-    const maxX = input.readDoubleLE(cursor);
+    const maxX = Reader.readDouble(input, cursor);
     cursor += 8;
-    const minY = input.readDoubleLE(cursor);
+    const minY = Reader.readDouble(input, cursor);
     cursor += 8;
-    const maxY = input.readDoubleLE(cursor);
+    const maxY = Reader.readDouble(input, cursor);
     cursor += 8;
-    const minValue = input.readDoubleLE(cursor);
+    const minValue = Reader.readDouble(input, cursor);
     cursor += 8;
-    const maxValue = input.readDoubleLE(cursor);
+    const maxValue = Reader.readDouble(input, cursor);
 
     return { sizeX, sizeY, minX, maxX, minY, maxY, minValue, maxValue };
   }
@@ -373,7 +374,7 @@ class GrdFile {
 
     const b = this.grdInner.slice(start, end);
 
-    return b.readFloatLE(b);
+    return binary.readFloatLE(b);
   }
 }
 

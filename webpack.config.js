@@ -9,7 +9,8 @@ const webpack = require('webpack');
 console.log(__dirname);
 module.exports = {
   entry: {
-    mainTest: './test/server/indexTest.js'
+    mainTest: './test/server/indexTest.js',
+    GrdFileTest: './test/server/lib/GrdFileTest.js'
   },
   output: {
     path: './test/browser/',
