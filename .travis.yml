@@ -1,5 +1,5 @@
 language: node_js
 node_js:
   - "6"
-before_install:
-  - bash -c "./pack.sh"
+before_script:
+  - node_modules/.bin/webpack --config webpack.test.config.js
