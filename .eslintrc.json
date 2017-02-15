@@ -1,0 +1,16 @@
+{
+  "extends": "airbnb/base",
+  "env": {
+    "node": true
+  },
+  "parserOptions": {
+    "sourceType": "script"
+  },
+  "rules": {
+    "comma-dangle": 0,
+    "strict": "error",
+    "no-param-reassign": 0,
+    "no-shadow": [2, { "allow": ["done", "err"] }],
+    "prefer-template": 0
+  }
+}

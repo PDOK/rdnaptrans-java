@@ -1,0 +1,52 @@
+{
+  "name": "rdnaptrans.js",
+  "version": "0.1.0",
+  "description": "JavaScript implementation of RDNAPTRANS, for the projection of RD geometries (EPSG:28992) to ETRS89 (EPSG:4258) and vice versa",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack",
+    "build-test": "./node_modules/.bin/webpack --config ./webpack.test.config.js",
+    "test": "node_modules/.bin/mocha --recursive -R spec --bail --check-leaks test/server && node_modules/.bin/karma start --browsers Firefox --single-run",
+    "test-browser": "webpack && ./node_modules/.bin/karma start --browsers Firefox --single-run",
+    "coverage": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R spec --bail --check-leaks test/server/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reinvantveer/rdnaptrans.js.git"
+  },
+  "keywords": [
+    "reproject",
+    "projection",
+    "ETRS89",
+    "RD",
+    "EPSG:28992",
+    "EPSG:4258"
+  ],
+  "author": "Rein van 't Veer",
+  "license": "SEE LICENSE IN 'LICENSE.txt'",
+  "bugs": {
+    "url": "https://github.com/reinvantveer/rdnaptrans.js/issues"
+  },
+  "homepage": "https://github.com/reinvantveer/rdnaptrans.js#readme",
+  "dependencies": {
+    "bops": "^1.0.0",
+    "co": "^4.6.0",
+    "xtend": "^4.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.3.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "karma": "^1.4.1",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-mocha": "^1.3.0",
+    "mocha": "^3.2.0",
+    "webpack": "^2.2.1",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
