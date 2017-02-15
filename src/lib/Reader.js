@@ -27,7 +27,6 @@ class Reader {
         return new Promise((resolve, reject) => {
           fs.readFile(filePath, (err, buffer) => {
             if (err) return reject(err);
-            console.log(buffer);
             return resolve(binary.from(buffer));
           });
         });
@@ -40,7 +39,7 @@ class Reader {
             xhrReq.open('GET', filePath);
             xhrReq.responseType = 'arraybuffer';
             xhrReq.send();
-            xhrReq.onreadystatechange = ()=> {
+            xhrReq.onreadystatechange = () => {
               if (xhrReq.readyState === XMLHttpRequest.DONE && xhrReq.status === 200) {
 
                 if (xhrReq.response === 'NOT FOUND') {
@@ -66,7 +65,7 @@ class Reader {
   }
 
   static readShort(buffer, offset) {
-    return binary.readUInt16LE(buffer, offset)
+    return binary.readUInt16LE(buffer, offset);
   }
 
   static readDouble(buffer, offset) {
