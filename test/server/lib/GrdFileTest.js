@@ -5,8 +5,6 @@
 
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const GrdFile = require('../../../src/lib/GrdFile');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -20,25 +18,9 @@ describe('GrdFile', () => {
     return grdFile.should.be.rejectedWith(Error, 'not a valid grd file');
   });
 
-/*
-  it('reads from XHR as from fs.readfile', () => {
-    const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-    const filePath = './test/resources/rdnaptrans/nlgeo04.grd';
-    const expected = fs.readFileSync(filePath);
-
-    const xhrReq = new XMLHttpRequest();
-    xhrReq.open('GET', filePath, false);
-    // xhrReq.responseType = 'arraybuffer';
-    xhrReq.send();
-
-    expected.should.deep.equal(xhrReq.response);
-  });
-*/
-
   it('reads the x offset grid file header', () => {
     const grdFile = new GrdFile('./test/resources/rdnaptrans/x2c.grd');
     return grdFile.then(data => {
-      console.log(data.header);
       return data.header.should.deep.equal({
         sizeX: 310,
         sizeY: 343,
@@ -54,7 +36,7 @@ describe('GrdFile', () => {
         safeMaxX: 300000.0,
         safeMinY: 289000.0,
         safeMaxY: 629000.0
-      })
+      });
     });
   });
 });
