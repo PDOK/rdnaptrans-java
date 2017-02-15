@@ -1,5 +1,6 @@
 language: node_js
 node_js:
   - "6"
-before_script:
+install:
+  - npm install
   - node_modules/.bin/webpack --config webpack.test.config.js
