@@ -4,14 +4,9 @@
 
 'use strict';
 
-const webpack = require('webpack');
-
-console.log(__dirname);
 module.exports = {
   entry: {
-    index: './index.js',
-    mainTest: './test/server/indexTest.js',
-    GrdFileTest: './test/server/lib/GrdFileTest.js'
+    index: './index.js'
   },
   output: {
     path: './dist/',

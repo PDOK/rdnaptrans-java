@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack",
+    "build-test": "./node_modules/.bin/webpack --config ./webpack.test.config.js",
     "test": "node_modules/.bin/mocha --recursive -R spec --bail --check-leaks test/server && node_modules/.bin/karma start --browsers Firefox --single-run",
     "test-browser": "webpack && ./node_modules/.bin/karma start --browsers Firefox --single-run",
     "coverage": "./node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R spec --bail --check-leaks test/server/"

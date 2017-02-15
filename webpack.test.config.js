@@ -4,9 +4,6 @@
 
 'use strict';
 
-const webpack = require('webpack');
-
-console.log(__dirname);
 module.exports = {
   entry: {
     index: './index.js',
@@ -14,7 +11,7 @@ module.exports = {
     GrdFileTest: './test/server/lib/GrdFileTest.js'
   },
   output: {
-    path: './dist/',
+    path: './test/browser/',
     filename: '[name].js'
   },
   node: {
