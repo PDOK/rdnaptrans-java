@@ -40,30 +40,20 @@ class Reader {
             xhrReq.open('GET', filePath);
             xhrReq.responseType = 'arraybuffer';
             xhrReq.send();
-            xhrReq.onreadystatechange = ()=> {
+            xhrReq.onreadystatechange = () => {
               if (xhrReq.readyState === XMLHttpRequest.DONE && xhrReq.status === 200) {
+                if (xhrReq.response === 'NOT FOUND') {
+                  return reject(new Error(`Resource ${filePath} not found`));
+                }
+
                 const buffer = xhrReq.response;
                 const dataview = new DataView(buffer);
                 const ints = new Uint8Array(buffer.byteLength);
-                for (let i = 0; i < ints.length; i++) {
-                  ints[i] = dataview.getUint8(i);
-                }
+                ints.forEach((int, index) => ints[index] = dataview.getUint8(i));
+
                 return resolve(ints);
               }
             };
-
-/*
-            if (xhrReq.response === 'NOT FOUND') {
-              return reject(new Error(`Resource ${filePath} not found`));
-            }
-
-            const ab = new ArrayBuffer(xhrReq.response.length);
-            const view = new Uint8Array(ab);
-
-            for (var i = 0; i < xhrReq.response.length; ++i) {
-              view[i] = xhrReq.response[i];
-            }
-*/
           } catch (err) {
             reject(err);
           }
@@ -73,7 +63,7 @@ class Reader {
   }
 
   static readShort(buffer, offset) {
-    return binary.readUInt16LE(buffer, offset)
+    return binary.readUInt16LE(buffer, offset);
   }
 
   static readDouble(buffer, offset) {

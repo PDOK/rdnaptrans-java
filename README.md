@@ -4,9 +4,15 @@
 JavaScript implementation of RDNAPTRANS&trade;
 https://www.kadaster.nl/web/Themas/Registraties/Rijksdriehoeksmeting/Transformatie-van-coordinaten.htm
 
+Compatible with Node.js back end and browser front end.
+
 # Install:
+## Node.js
 * clone the repo
 * run `npm install`
+
+## Browser
+As under the Node.js install section
 
 # Usage:
 Due to the rather youthful nature of the port, the implementation is still very close to the original Java version. Therefore, you need a few helping classes to convert from RD or ETRS89:
@@ -28,3 +34,5 @@ Geographic {
 ```
 
 The `phi`, `lambda` and `h` stuff in the returned Geographic object correspond with latitude, longitude and height. 
+
+The JS implementation deviates in the respect of its asynchronous nature. This is due to the loading of the grid files needed for the final correction of the coordinates.
